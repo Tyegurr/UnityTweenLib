@@ -74,7 +74,7 @@ namespace TyesStuff.Animation.TweenLib
                 }
 
                 // check if the tween is okay to be removed
-                if (Tween.CurrentTime > Tween.Duration)
+                if (Tween.CurrentTime > Tween.Duration && Tween.DestroyOnFinish)
                 {
                     if (Tween.OnTweenEnded != null)
                         Tween.OnTweenEnded();

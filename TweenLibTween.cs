@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace TyesStuff.Animation.TweenLib
 {
+    [Serializable] // for unity debugging purposes
     public class TweenLibTween
     {
         public string TweenName = "New Tween";
@@ -13,6 +15,7 @@ namespace TyesStuff.Animation.TweenLib
 
         public float Duration { get; private set; } = 0f;
         public float CurrentTime { get; private set; } = 0f;
+        public bool Reverse = false;
 
         private TweenLibTweenStyle m_AttachedStyle;
 
@@ -37,6 +40,20 @@ namespace TyesStuff.Animation.TweenLib
 
             if (TargetObject == null) // don't go on further if there is no target object
                 return;
+
+            float CurrentInterval = CurrentTime / Duration;
+            if (Reverse)
+            {
+                CurrentInterval = 1f - (CurrentTime / Duration);
+            }
+            float CurveInterval = m_AttachedStyle.Curve.Evaluate(CurrentInterval);
+
+            foreach (TweenLibTweenProperty Property in m_Properties)
+            {
+                Type TargetObjectType = TargetObject.GetType();
+                PropertyInfo ObjectProp = TargetObjectType.GetProperty(Property.PropertyName);
+                ObjectProp.SetValue(TargetObject, TypeToLerpOperation.NameToOperation[ObjectProp.PropertyType.ToString()](Property.StartValue, Property.EndValue, CurveInterval));
+            }
         }
 
         public void AddProperty(string PropertyName, object StartValue,  object EndValue)
