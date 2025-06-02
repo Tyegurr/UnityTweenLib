@@ -68,6 +68,19 @@ namespace TyesStuff.Animation.TweenLib
         {
             foreach (TweenLibTween Tween in m_CurrentTweens)
             {
+                if (Tween.IsPlaying)
+                {
+                    Tween.DeltaStep();
+                }
+
+                // check if the tween is okay to be removed
+                if (Tween.CurrentTime > Tween.Duration)
+                {
+                    if (Tween.OnTweenEnded != null)
+                        Tween.OnTweenEnded();
+                    DestroyTween(Tween);
+                    return;
+                }
             }
         }
     }
