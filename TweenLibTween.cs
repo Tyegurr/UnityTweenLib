@@ -13,6 +13,7 @@ namespace TyesStuff.Animation.TweenLib
 
         public bool DestroyOnFinish = true;
 
+        public float Delay = 0f;
         public float Duration { get; private set; } = 0f;
         public float CurrentTime { get; private set; } = 0f;
         public bool Reverse = false;
@@ -41,10 +42,10 @@ namespace TyesStuff.Animation.TweenLib
             if (TargetObject == null) // don't go on further if there is no target object
                 return;
 
-            float CurrentInterval = CurrentTime / Duration;
+            float CurrentInterval = Mathf.Clamp(CurrentTime - Delay, 0, float.MaxValue) / Duration;
             if (Reverse)
             {
-                CurrentInterval = 1f - (CurrentTime / Duration);
+                CurrentInterval = 1f - (Mathf.Clamp(CurrentTime - Delay, 0, float.MaxValue) / Duration);
             }
             float CurveInterval = m_AttachedStyle.Curve.Evaluate(CurrentInterval);
 
